@@ -8,6 +8,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import src.ControleurGUI;
 import src.utils.ErrorUtils;
 import src.utils.FileChooserUtils;
+import src.vue.GUI.edition.FrameAjouterFlags;
+
 
 public class BarreMenu extends JMenuBar implements ActionListener
 {
@@ -24,7 +26,10 @@ public class BarreMenu extends JMenuBar implements ActionListener
 	private JMenuItem         menuiChangerCouleurFleche;
 	private JMenuItem         menuiChangerCouleurFond;
 
+
+	private JMenuItem         menuiAjouterFlags;
 	private JCheckBoxMenuItem menuiAfficherClassesExternes;
+
 
 
 	/*-------------------------------*/
@@ -56,7 +61,9 @@ public class BarreMenu extends JMenuBar implements ActionListener
 		this.menuiQuitter                 = new JMenuItem("Quitter"                              );
 		this.menuiChangerCouleurFleche    = new JMenuItem("Changer la couleur des flèches"       );
 		this.menuiChangerCouleurFond      = new JMenuItem("Changer la couleur du fond"           );
+		this.menuiAjouterFlags           = new JMenuItem("Ajouter flag"                         );
 		this.menuiAfficherClassesExternes = new JCheckBoxMenuItem("Afficher les classes externes");
+
 
 		/*-------------------------------*/
 		/* positionnement des composants */
@@ -70,10 +77,12 @@ public class BarreMenu extends JMenuBar implements ActionListener
 
 		menuAffichage.add         ( this.menuiChangerCouleurFleche    );
 		menuAffichage.add         ( this.menuiChangerCouleurFond      );
+		menuAffichage.add         ( this.menuiAjouterFlags           );
 		menuAffichage.addSeparator(                                   );
 		menuAffichage.add         ( this.menuiCaptureEcran            );
 		menuAffichage.addSeparator(                                   );
 		menuAffichage.add         ( this.menuiAfficherClassesExternes );
+
 
 		//rajout des menus
 		this.add( menuFichier   );
@@ -89,7 +98,9 @@ public class BarreMenu extends JMenuBar implements ActionListener
 		this.menuiQuitter                .addActionListener(this); 
 		this.menuiChangerCouleurFleche   .addActionListener(this);
 		this.menuiChangerCouleurFond	 .addActionListener(this);
+		this.menuiAjouterFlags           .addActionListener(this);
 		this.menuiAfficherClassesExternes.addActionListener(this);
+
 
 		this.menuiAfficherClassesExternes.setSelected(false);
 
@@ -143,6 +154,10 @@ public class BarreMenu extends JMenuBar implements ActionListener
 
 		// Changer couleur du fond
 		if (e.getSource() == this.menuiChangerCouleurFond  ) { this.ctrl.ouvrirPanelCouleurFond  (); }
+
+		// Ajouter flag
+		if (e.getSource() == this.menuiAjouterFlags ) { new FrameAjouterFlags(this.ctrl).setVisible(true); }
+
 
 		// Exporter
 		if (e.getSource() == this.menuiExporter) 

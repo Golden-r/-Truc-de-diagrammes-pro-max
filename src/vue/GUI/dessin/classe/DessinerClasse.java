@@ -87,6 +87,15 @@ public class DessinerClasse
 		this.dessinerSectionNom( g2, classe, dims, x, yActuel );
 		yActuel += dims.getHauteurNom();
 
+		boolean titreOnly = (classe instanceof ClasseExterne);
+		if (titreOnly)
+		{
+			// Affiche uniquement le titre (nom + éventuel type) : aucune section attributs/méthodes.
+			g2.drawLine( x, yActuel, x + largeur, yActuel );
+			return;
+		}
+
+
 		// Lst des Attributs ( complet ou pas ?)
 		this.dessinerSectionAttributs( g2, classe, lstClasses, dims, x, yActuel, affichageComplet );
 		yActuel += dims.getHauteurAttributs();
@@ -95,28 +104,38 @@ public class DessinerClasse
 		this.dessinerSectionMethodes( g2, classe, dims, x, yActuel, affichageComplet );
 	}
 
+
 	/**
 	 * Dessine l'entete specifique pour une classe externe (fond gris).
 	 */
 	private void dessinerSectionNomClasseExterne( Graphics2D g2, ClasseExterne classe, 
 												DimensionsCalculateur dims, int x, int ySection ) 
 	{
-		// Données :
-		// - - - - - -
+// Même style que la section "titre" des classes internes, mais avec une bordure visible.
 		int largeur = dims.getLargeur();
 		int hNom    = dims.getHauteurNom();
 
-		// Fond gris clair
-		g2.setColor( new Color(200, 200, 200) );
+		// Fond
+		g2.setColor( Color.WHITE );
 		g2.fillRect( x, ySection, largeur, hNom );
 
-		// Nom centré en gris foncé
-		g2.setColor( new Color(60, 60, 60)                );
-		g2.setFont ( new Font("SansSerif", Font.BOLD, 14) );
-		FontMetrics fm       = g2.getFontMetrics();
-		int         xCentre = x + ( largeur - fm.stringWidth( classe.getNom() ) ) / 2;
-		int         yCentre = ySection + ( hNom + fm.getAscent() ) / 2;
-		g2.drawString( classe.getNom(), xCentre, yCentre );
+		// Bordure (pour éviter que la bordure de classe soit masquée/peu visible sur une classe externe)
+		g2.setColor( Color.BLACK );
+		g2.setStroke( DessinerClasse.STROKE_BORDURE );
+		g2.drawRect( x, ySection, largeur, hNom );
+
+
+		// Texte
+		int yTexte = ySection + DessinerClasse.PADDING;
+		g2.setFont( DessinerClasse.FONT_NOM );
+		FontMetrics fmNom = g2.getFontMetrics();
+		int xCentreNom    = x + ( largeur - fmNom.stringWidth( classe.getNom() ) ) / 2;
+		g2.setColor( Color.BLACK );
+		g2.drawString( classe.getNom(), xCentreNom, yTexte + fmNom.getAscent() );
+
+		// Légère séparation identique (une seule ligne, fin de la section titre)
+		g2.setColor( Color.BLACK );
+		g2.drawLine( x, ySection + hNom, x + largeur, ySection + hNom );
 	}
 
 	/* Nom + Type.CLASSE             */
@@ -179,9 +198,9 @@ public class DessinerClasse
 	 * Dessine la section centrale contenant la liste des attributs.
 	 * Gere l'alignement des types, le soulignement des elements statiques et la troncature (...) si necessaire.
 	 */
-private void dessinerSectionAttributs( Graphics2D g2, Classe classe, List<Classe> lstClasses, DimensionsCalculateur dims, 
+	private void dessinerSectionAttributs( Graphics2D g2, Classe classe, List<Classe> lstClasses, DimensionsCalculateur dims, 
 									   int x, int ySection, boolean affichageComplet                                     )
-{
+	{
 	// Données :
 	// - - - - - -
 	List<Attribut> lstAttributs  = classe.getCopieLstAttributsHorsAsso( lstClasses );

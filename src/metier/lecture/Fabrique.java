@@ -31,6 +31,33 @@ import src.metier.enums.*;
 public class Fabrique
 {
 	/*-------------------------------*/
+	/* Normalisation types externes */
+	/*-------------------------------*/
+
+	/**
+	 * Nettoie un nom de type externe pour l'affichage et la comparaison.
+	 * - supprime les caractères de fin (ex: ';')
+	 * - garde uniquement le dernier segment après '.' (ex: javax.swing.JFrame -> JFrame)
+	 */
+	private String nettoyerNomTypeExterne(String nom)
+	{
+		if (nom == null) return "";
+		String n = nom.trim();
+		if (n.endsWith(";")) n = n.substring(0, n.length() - 1).trim();
+
+		// On garde le dernier segment (package. -> nom simple)
+		int idx = n.lastIndexOf('.');
+		if (idx != -1 && idx + 1 < n.length())
+			n = n.substring(idx + 1);
+
+		// Nettoyage résiduel (rare)
+		if (n.endsWith(",")) n = n.substring(0, n.length() - 1);
+		if (n.endsWith(">")) n = n.substring(0, n.length() - 1).trim();
+
+		return n;
+	}
+
+	/*-------------------------------*/
 	/* Creation                      */
 	/*-------------------------------*/
 	/**
@@ -102,16 +129,19 @@ public class Fabrique
 			// EXETNDS
 			if ( tmp.equals("extends") && sc.hasNext() )
 			{
-				String nomExtend = sc.next();
+				String nomExtend = this.nettoyerNomTypeExterne( sc.next() );
 				classe.ajouterExtend( nomExtend );
 			}
+
+
 
 			// IMPLEMENTS ( plusieurs possbiles )
 			else if ( tmp.equals("implements") && sc.hasNext() )
 			{
-				while ( sc.hasNext() )
-				{
-					String nomImplementes = sc.next();
+					while ( sc.hasNext() )
+					{
+							String nomImplementes = this.nettoyerNomTypeExterne(sc.next());
+
 
 					// Gérer si implements Type _ , _ Type2
 					//  car ',' est prise dans next
@@ -399,6 +429,7 @@ public class Fabrique
 	 */
 	private List<Parametre> recupLstParams( String ligne )
 	{
+
 		List<Parametre> lstParms = new ArrayList<Parametre>();
 
 		// trouver l'emplacement des parmas

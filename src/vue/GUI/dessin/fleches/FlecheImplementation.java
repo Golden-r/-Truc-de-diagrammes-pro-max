@@ -100,7 +100,8 @@ public class FlecheImplementation extends Fleche
 	public void draw(Graphics2D g)
 	{
 		g.setColor(this.getCouleur());
-		g.setStroke(Fleche.LIGNE_NORMAL);
+		g.setStroke(Fleche.lignePointille);
+
 
 		Path2D tete = Fleche.TETE_TRIANGLE;
 		double angle = Math.atan2(this.getYFin() - this.getYDebut(), this.getXFin() - this.getXDebut());
